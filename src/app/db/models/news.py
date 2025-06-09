@@ -17,7 +17,10 @@ class Source(Base):
         DateTime, server_default=func.now(), onupdate=func.now()
     )
     news: Mapped[List["News"]] = relationship(back_populates="source")
-    update_log: Mapped[List["UpdateLogs"]] = relationship(back_populates="source")
+    update_log: Mapped[List["UpdateLog"]] = relationship(back_populates="source")
+    tags: Mapped[List["Tag"]] = relationship(
+        secondary="news_tags", back_populates="news"
+    )
 
 
 class News(Base):
