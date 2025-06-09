@@ -1,9 +1,32 @@
+from contextlib import asynccontextmanager
+from dotenv import load_dotenv
+
+from dishka import make_async_container
+from dishka.integrations.fastapi import setup_dishka
+
 from fastapi import FastAPI
+
 
 import uvicorn
 
+from app.ioc import DBProvider
+from src.app.config import Config
+
+load_dotenv()
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    yield
+    await app.state.dishka_conteiner.close()
+
+
+config = Config()
+container = make_async_container(DBProvider(), context={Config: config})
 
 app = FastAPI()
+
+setup_dishka(container=container, app=app)
 
 
 if __name__ == "__main__":
