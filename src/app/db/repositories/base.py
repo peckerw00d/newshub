@@ -35,21 +35,21 @@ class Repository(RepositoryInterface[T, ID]):
 
     async def get_by_id(self, id: ID) -> Optional[T]:
         stmt = Select(self.model).where(self.model.id == id)
-        result: Result = self.session.execute(stmt)
+        result: Result = await self.session.execute(stmt)
         return result.scalars().first()
 
     async def get_all(self) -> List[T]:
         stmt = Select(self.model)
-        result: Result = self.session.execute(stmt)
+        result: Result = await self.session.execute(stmt)
         return result.scalars().all()
 
     async def create(self, obj: T) -> T:
         self.session.add(obj)
-        await self.sesion.commit()
+        await self.session.commit()
         return obj
 
     async def delete(self, id: ID) -> None:
         obj = await self.get_by_id(id)
         if obj:
-            await self.session.delete()
+            await self.session.delete(obj)
             await self.session.commit()
