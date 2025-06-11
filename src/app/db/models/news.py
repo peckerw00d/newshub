@@ -1,7 +1,17 @@
 import datetime
 from typing import List
 
-from sqlalchemy import ARRAY, DateTime, Float, ForeignKey, String, Text, func
+from sqlalchemy import (
+    ARRAY,
+    DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    false,
+    func,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.app.db.models.base import Base
@@ -16,6 +26,7 @@ class Source(Base):
     last_updated: Mapped[datetime.datetime] = mapped_column(
         DateTime, server_default=func.now(), onupdate=func.now()
     )
+    poll_interval: Mapped[int] = mapped_column(Integer, nullable=false)
     news: Mapped[List["News"]] = relationship(back_populates="source")
     update_log: Mapped[List["UpdateLog"]] = relationship(back_populates="source")
     tags: Mapped[List["Tag"]] = relationship(
