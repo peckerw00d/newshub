@@ -3,6 +3,7 @@ from typing import List
 
 from sqlalchemy import (
     ARRAY,
+    Boolean,
     DateTime,
     Float,
     ForeignKey,
@@ -26,7 +27,8 @@ class Source(Base):
     last_updated: Mapped[datetime.datetime] = mapped_column(
         DateTime, server_default=func.now(), onupdate=func.now()
     )
-    poll_interval: Mapped[int] = mapped_column(Integer, nullable=false)
+    poll_interval: Mapped[int] = mapped_column(Integer, nullable=False, default=30)
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     news: Mapped[List["News"]] = relationship(back_populates="source")
     update_log: Mapped[List["UpdateLog"]] = relationship(back_populates="source")
     tags: Mapped[List["Tag"]] = relationship(
