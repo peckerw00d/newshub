@@ -1,0 +1,2 @@
+class SourceAlreadyExists(Exception):
+    pass

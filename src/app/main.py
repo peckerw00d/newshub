@@ -9,8 +9,10 @@ from fastapi import FastAPI
 
 import uvicorn
 
-from app.ioc import DBProvider
+from src.app.ioc import DBProvider, RepositoryProvider, ServiceProvider
 from src.app.config import Config
+from src.app.api.routers import router
+
 
 load_dotenv()
 
@@ -22,9 +24,12 @@ async def lifespan(app: FastAPI):
 
 
 config = Config()
-container = make_async_container(DBProvider(), context={Config: config})
+container = make_async_container(
+    DBProvider(), RepositoryProvider(), ServiceProvider(), context={Config: config}
+)
 
 app = FastAPI()
+app.include_router(router=router)
 
 setup_dishka(container=container, app=app)
 

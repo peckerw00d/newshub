@@ -11,7 +11,7 @@ class Tag(Base):
     name: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
 
     news: Mapped[List["News"]] = relationship(
-        secondary="news_tags", back_populates="tags"
+        secondary="news_tags", back_populates="tags", lazy="raise"
     )
 
 

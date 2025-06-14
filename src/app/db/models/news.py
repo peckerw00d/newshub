@@ -31,9 +31,6 @@ class Source(Base):
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     news: Mapped[List["News"]] = relationship(back_populates="source")
     update_log: Mapped[List["UpdateLog"]] = relationship(back_populates="source")
-    tags: Mapped[List["Tag"]] = relationship(
-        secondary="news_tags", back_populates="news"
-    )
 
 
 class News(Base):
@@ -51,6 +48,9 @@ class News(Base):
     hash: Mapped[str] = mapped_column(String(32), nullable=False, unique=True)
     source: Mapped["Source"] = relationship(back_populates="news")
     cluster: Mapped["Cluster"] = relationship(back_populates="news")
+    tags: Mapped[List["Tag"]] = relationship(
+        secondary="news_tags", back_populates="news", lazy="raise"
+    )
 
 
 class Cluster(Base):
