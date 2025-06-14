@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException, status
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
 
-from src.app.services.exceptions import SourceAlreadyExists
-from src.app.api.schemas import SourceAdminCreate
+from src.app.services.exceptions import SourceAlreadyExists, SourceNotFound
+from src.app.api.schemas import SourceAdminCreate, SourceAdminResponse
 from src.app.services.source_admin import SourceAdminService
 from src.app.services.dto import SourceCreateDTO
 
@@ -18,7 +18,42 @@ async def add_source(
         source_data = SourceCreateDTO(**data.model_dump())
         new_source = await source_admin_service.add_source(source_data=source_data)
         return {"message": "The source was added successfully!"}
+
     except SourceAlreadyExists:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT, detail="The source already exists!"
+        )
+
+
+@router.get("/")
+async def get_all_sources(source_admin_service: FromDishka[SourceAdminService]):
+    try:
+        sources_dto = await source_admin_service.get_all_sources()
+        return [
+            SourceAdminResponse(
+                id=dto.id,
+                name=dto.name,
+                url=dto.url,
+                type=dto.type,
+                poll_interval=dto.poll_interval,
+                is_active=dto.is_active,
+                last_updated=dto.last_updated,
+            )
+            for dto in sources_dto
+        ]
+
+    except SourceNotFound:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="No sources found!"
+        )
+
+
+@router.delete("/{id}")
+async def delete_source(id: int, source_admin_service: FromDishka[SourceAdminService]):
+    try:
+        return await source_admin_service.delete_source(id=id)
+
+    except SourceNotFound:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, details="No sources found!"
         )

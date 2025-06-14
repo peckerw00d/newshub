@@ -1,8 +1,9 @@
 from typing import List
-from src.app.services.exceptions import SourceAlreadyExists
+
+from src.app.services.exceptions import SourceAlreadyExists, SourceNotFound
 from src.app.db.models.news import Source
 from src.app.db.repositories.base import RepositoryInterface
-from src.app.services.dto import SourceCreateDTO
+from src.app.services.dto import SourceCreateDTO, SourceResponseDTO
 
 
 class SourceAdminService:
@@ -22,8 +23,15 @@ class SourceAdminService:
 
         return await self.repository.create(source)
 
-    async def get_all_sources(self, source_data: SourceCreateDTO) -> List[Source]:
-        return self.repository.get_all()
+    async def get_all_sources(self) -> List[SourceResponseDTO]:
+        sources = await self.repository.get_all()
+        if not sources:
+            raise SourceNotFound
 
-    async def delete_source(self, source_id: int) -> None:
-        return self.repository.delete(id=source_id)
+        return [source.to_response_dto() for source in sources]
+
+    async def delete_source(self, id: int) -> None:
+        if not await self.repository.get_by_id(id=id):
+            raise SourceNotFound
+
+        return await self.repository.delete(id=id)
