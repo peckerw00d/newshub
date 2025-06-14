@@ -9,3 +9,4 @@ class SourceDTO:
     type: str
     last_updated: datetime.datetime
     poll_interval: int
+    is_active: bool
