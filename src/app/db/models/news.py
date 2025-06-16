@@ -27,6 +27,7 @@ class Source(Base):
     last_updated: Mapped[datetime.datetime] = mapped_column(
         DateTime, server_default=func.now(), onupdate=func.now()
     )
+    last_fetched: Mapped[datetime.datetime] = mapped_column(DateTime, nullable=True)
     poll_interval: Mapped[int] = mapped_column(Integer, nullable=False, default=30)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     news: Mapped[List["News"]] = relationship(back_populates="source")
@@ -56,7 +57,7 @@ class News(Base):
     cluster_id: Mapped[int | None] = mapped_column(ForeignKey("clusters.id"))
     sentiment_score: Mapped[float | None] = mapped_column(Float)
     sentiment_label: Mapped[str | None] = mapped_column(String(50))
-    hash: Mapped[str] = mapped_column(String(32), nullable=False, unique=True)
+    hash: Mapped[str] = mapped_column(String(32), nullable=True)
     source: Mapped["Source"] = relationship(back_populates="news")
     cluster: Mapped["Cluster"] = relationship(back_populates="news")
     tags: Mapped[List["Tag"]] = relationship(

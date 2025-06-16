@@ -7,7 +7,7 @@ from src.app.services.source_admin import SourceAdminService
 from src.app.services.dto import SourceCreateDTO
 
 
-router = APIRouter(route_class=DishkaRoute)
+router = APIRouter(route_class=DishkaRoute, prefix="/admin", tags=["Admin"])
 
 
 @router.post("/")

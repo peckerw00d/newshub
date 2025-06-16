@@ -48,6 +48,11 @@ class Repository(RepositoryInterface[T, ID]):
         await self.session.commit()
         return obj
 
+    async def update(self, obj: T) -> T:
+        await self.session.merge(obj)
+        await self.session.commit()
+        return obj
+
     async def delete(self, id: ID) -> None:
         obj = await self.get_by_id(id)
         if obj:

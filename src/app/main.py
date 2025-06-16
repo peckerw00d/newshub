@@ -9,7 +9,12 @@ from fastapi import FastAPI
 
 import uvicorn
 
-from src.app.ioc import DBProvider, RepositoryProvider, ServiceProvider
+from src.app.ioc import (
+    DBProvider,
+    CollectorProvider,
+    RepositoryProvider,
+    ServiceProvider,
+)
 from src.app.config import Config
 from src.app.api.routers import router
 
@@ -25,7 +30,11 @@ async def lifespan(app: FastAPI):
 
 config = Config()
 container = make_async_container(
-    DBProvider(), RepositoryProvider(), ServiceProvider(), context={Config: config}
+    DBProvider(),
+    RepositoryProvider(),
+    ServiceProvider(),
+    CollectorProvider(),
+    context={Config: config},
 )
 
 app = FastAPI()

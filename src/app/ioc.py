@@ -3,9 +3,11 @@ from dishka import Provider, Scope, from_context, provide
 
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 
+from src.app.db.repositories.logs import UpdateLogRepository
+from src.app.services.news_collector import NewsCollector
 from src.app.services.source_admin import SourceAdminService
 from src.app.db.database import new_session_maker
-from src.app.db.repositories.news import SourceRepository
+from src.app.db.repositories.news import NewsRepository, SourceRepository
 from src.app.config import Config
 
 
@@ -31,6 +33,14 @@ class RepositoryProvider(Provider):
     async def get_source_repo(self, session: AsyncSession) -> SourceRepository:
         return SourceRepository(session=session)
 
+    @provide(scope=Scope.REQUEST)
+    async def get_news_repo(self, session: AsyncSession) -> NewsRepository:
+        return NewsRepository(session=session)
+
+    @provide(scope=Scope.REQUEST)
+    async def get_logs_repo(self, session: AsyncSession) -> UpdateLogRepository:
+        return UpdateLogRepository(session=session)
+
 
 class ServiceProvider(Provider):
     @provide(scope=Scope.REQUEST)
@@ -38,3 +48,18 @@ class ServiceProvider(Provider):
         self, repository: SourceRepository
     ) -> SourceAdminService:
         return SourceAdminService(repository=repository)
+
+
+class CollectorProvider(Provider):
+    @provide(scope=Scope.REQUEST)
+    async def get_news_collector(
+        self,
+        source_repository: SourceRepository,
+        news_repository: NewsRepository,
+        logs_repository: UpdateLogRepository,
+    ) -> NewsCollector:
+        return NewsCollector(
+            source_repository=source_repository,
+            news_repository=news_repository,
+            logs_repository=logs_repository,
+        )
