@@ -9,6 +9,7 @@ from fastapi import FastAPI
 
 import uvicorn
 
+from src.app.services.scheduler import Scheduler
 from src.app.ioc import (
     DBProvider,
     CollectorProvider,
@@ -25,8 +26,13 @@ load_dotenv()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    container = app.state.dishka_container
+    scheduler = await container.get(Scheduler)
+
+    await scheduler.start()
     yield
-    await app.state.dishka_conteiner.close()
+    await scheduler.stop()
+    await container.close()
 
 
 config = Config()

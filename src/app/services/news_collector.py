@@ -5,7 +5,6 @@ from typing import List
 
 import httpx
 
-from src.app.db.models.logs import UpdateLog
 from src.app.db.models.news import News, Source
 from src.app.db.repositories.base import RepositoryInterface
 from src.app.services.exceptions import SourceNotFound
@@ -73,22 +72,7 @@ class NewsCollector:
         content = f"{article['title']}{article.get('description', '')}"
         return hashlib.md5(content.encode()).hexdigest()
 
-    async def _handle_error(self, source: Source, error_msg: str) -> None:
-        log = UpdateLog(
-            source_id=source.id,
-            start_time=datetime.now(),
-            end_time=datetime.now(),
-            status="failed",
-            error_message=error_msg,
-        )
-        await self.logs_repository.create(log)
-
     async def collect_news(self) -> List[News]:
-        try:
-            source = await self._get_source()
-            news_data = await self._fetch_from_api()
-            await self._save_news(news_data, source)
-
-        except Exception as err:
-            await self._handle_error(source, str(err))
-            raise
+        source = await self._get_source()
+        news_data = await self._fetch_from_api()
+        await self._save_news(news_data, source)

@@ -28,7 +28,7 @@ class Source(Base):
         DateTime, server_default=func.now(), onupdate=func.now()
     )
     last_fetched: Mapped[datetime.datetime] = mapped_column(DateTime, nullable=True)
-    poll_interval: Mapped[int] = mapped_column(Integer, nullable=False, default=30)
+    poll_interval: Mapped[float] = mapped_column(Float, nullable=False, default=30)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     news: Mapped[List["News"]] = relationship(back_populates="source")
     update_log: Mapped[List["UpdateLog"]] = relationship(back_populates="source")

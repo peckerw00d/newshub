@@ -6,7 +6,7 @@ class SourceAdminBase(BaseModel):
     name: str
     url: str
     type: str
-    poll_interval: int
+    poll_interval: float
 
 
 class SourceAdminCreate(SourceAdminBase):

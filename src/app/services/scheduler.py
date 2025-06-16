@@ -3,8 +3,8 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 from apscheduler.executors.asyncio import AsyncIOExecutor
 
-from app.db.models.logs import UpdateLog
-from app.db.models.news import Source
+from src.app.db.models.logs import UpdateLog
+from src.app.db.models.news import Source
 from src.app.services.news_collector import NewsCollector
 from src.app.db.repositories.base import RepositoryInterface
 from src.app.config import Config

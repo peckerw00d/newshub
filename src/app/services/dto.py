@@ -7,7 +7,7 @@ class SourceCreateDTO:
     name: str
     url: str
     type: str
-    poll_interval: int
+    poll_interval: float
 
 
 @dataclass
