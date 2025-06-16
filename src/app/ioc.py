@@ -3,6 +3,7 @@ from dishka import Provider, Scope, from_context, provide
 
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 
+from src.app.services.scheduler import Scheduler
 from src.app.db.repositories.logs import UpdateLogRepository
 from src.app.services.news_collector import NewsCollector
 from src.app.services.source_admin import SourceAdminService
@@ -62,4 +63,23 @@ class CollectorProvider(Provider):
             source_repository=source_repository,
             news_repository=news_repository,
             logs_repository=logs_repository,
+        )
+
+
+class SchedulerProvider(Provider):
+    config = from_context(provides=Config, scope=Scope.APP)
+
+    @provide(scope=Scope.REQUEST)
+    async def get_scheduler(
+        self,
+        config: Config,
+        source_repository: SourceRepository,
+        logs_repository: UpdateLogRepository,
+        collector: NewsCollector,
+    ) -> Scheduler:
+        return Scheduler(
+            config=config,
+            source_repository=source_repository,
+            logs_repository=logs_repository,
+            collector=collector,
         )

@@ -14,6 +14,7 @@ from src.app.ioc import (
     CollectorProvider,
     RepositoryProvider,
     ServiceProvider,
+    SchedulerProvider,
 )
 from src.app.config import Config
 from src.app.api.routers import router
@@ -34,6 +35,7 @@ container = make_async_container(
     RepositoryProvider(),
     ServiceProvider(),
     CollectorProvider(),
+    SchedulerProvider(),
     context={Config: config},
 )
 
