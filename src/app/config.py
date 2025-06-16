@@ -13,4 +13,7 @@ class PostgresConfig(BaseModel):
 
 
 class Config(BaseModel):
+    SCHEDULER_DEFAULT_INTERVAL: int = 300
+    SCHEDULER_MAX_INSTANCES: int = 3
+
     postgres: PostgresConfig = Field(default_factory=lambda: PostgresConfig())
