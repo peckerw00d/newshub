@@ -1,55 +1,42 @@
 from contextlib import asynccontextmanager
+from typing import AsyncIterator, AsyncContextManager, Callable
 from dotenv import load_dotenv
 
-from dishka import make_async_container
-from dishka.integrations.fastapi import setup_dishka
-
+from dishka.integrations.fastapi import setup_dishka as setup_fastapi_dishka
 from fastapi import FastAPI
-
-
+from taskiq_aio_pika import AioPikaBroker
 import uvicorn
 
-from src.app.services.scheduler import Scheduler
-from src.app.ioc import (
-    DBProvider,
-    CollectorProvider,
-    RepositoryProvider,
-    ServiceProvider,
-    SchedulerProvider,
-)
-from src.app.config import Config
+from src.app.common.broker import setup_taskiq_broker
+from src.app.common.di.setup import setup_ioc_container
+from src.app.common.config import Config, load_config
 from src.app.api.routers import router
-
 
 load_dotenv()
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    container = app.state.dishka_container
-    scheduler = await container.get(Scheduler)
+def broker_startup_lifespan(
+    broker: AioPikaBroker,
+) -> Callable[[FastAPI], AsyncContextManager[None]]:
+    @asynccontextmanager
+    async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+        if not broker.is_worker_process:
+            await broker.startup()
+        yield
+        await broker.shutdown()
+        await app.state.dishka_container.close()
 
-    await scheduler.start()
-    yield
-    await scheduler.stop()
-    await container.close()
+    return lifespan
 
 
-config = Config()
-container = make_async_container(
-    DBProvider(),
-    RepositoryProvider(),
-    ServiceProvider(),
-    CollectorProvider(),
-    SchedulerProvider(),
-    context={Config: config},
-)
+config: Config = load_config()
+broker: AioPikaBroker = setup_taskiq_broker(config=config)
+container = setup_ioc_container(config=config, broker=broker)
 
-app = FastAPI()
+app = FastAPI(lifespan=broker_startup_lifespan(broker=broker))
 app.include_router(router=router)
 
-setup_dishka(container=container, app=app)
-
+setup_fastapi_dishka(container=container, app=app)
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

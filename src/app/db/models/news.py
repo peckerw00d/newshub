@@ -7,7 +7,6 @@ from sqlalchemy import (
     DateTime,
     Float,
     ForeignKey,
-    Integer,
     String,
     Text,
     func,
@@ -32,17 +31,6 @@ class Source(Base):
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     news: Mapped[List["News"]] = relationship(back_populates="source")
     update_log: Mapped[List["UpdateLog"]] = relationship(back_populates="source")
-
-    def to_response_dto(self) -> SourceResponseDTO:
-        return SourceResponseDTO(
-            id=self.id,
-            name=self.name,
-            url=self.url,
-            type=self.type,
-            poll_interval=self.poll_interval,
-            last_updated=self.last_updated,
-            is_active=self.is_active,
-        )
 
 
 class News(Base):

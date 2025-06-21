@@ -12,8 +12,14 @@ class PostgresConfig(BaseModel):
     max_overflow: int = 10
 
 
-class Config(BaseModel):
-    SCHEDULER_DEFAULT_INTERVAL: int = 300
-    SCHEDULER_MAX_INSTANCES: int = 3
+class RabbitMQConfig(BaseModel):
+    url: str = str(getenv("RABBITMQ_URL"))
 
+
+class Config(BaseModel):
     postgres: PostgresConfig = Field(default_factory=lambda: PostgresConfig())
+    rabbitmq: RabbitMQConfig = Field(default_factory=lambda: RabbitMQConfig())
+
+
+def load_config() -> "Config":
+    return Config()

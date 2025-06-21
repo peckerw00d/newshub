@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
 
-from src.app.services.news_collector import NewsCollector
+from src.app.services.tasks.rabbit_publisher import RabbitPublisher
 
 
 router = APIRouter(
@@ -14,6 +14,6 @@ router = APIRouter(
 
 
 @router.post("/fetch_news")
-async def fetch_news(fetcher: FromDishka[NewsCollector]):
-    await fetcher.collect_news()
+async def fetch_news(publisher: FromDishka[RabbitPublisher]):
+    await publisher.publish_fetch_news_task()
     return {"message": "News fetching completed successfully"}

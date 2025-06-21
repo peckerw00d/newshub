@@ -1,15 +1,19 @@
 from typing import AsyncIterable
+
 from dishka import Provider, Scope, from_context, provide
 
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
+from taskiq_aio_pika import AioPikaBroker
 
-from src.app.services.scheduler import Scheduler
+from src.app.db.repositories.news import NewsRepository, SourceRepository
 from src.app.db.repositories.logs import UpdateLogRepository
+from src.app.db.database import new_session_maker
+
+from src.app.services.tasks.rabbit_publisher import RabbitPublisher
 from src.app.services.news_collector import NewsCollector
 from src.app.services.source_admin import SourceAdminService
-from src.app.db.database import new_session_maker
-from src.app.db.repositories.news import NewsRepository, SourceRepository
-from src.app.config import Config
+
+from src.app.common.config import Config
 
 
 class DBProvider(Provider):
@@ -66,20 +70,9 @@ class CollectorProvider(Provider):
         )
 
 
-class SchedulerProvider(Provider):
-    config = from_context(provides=Config, scope=Scope.APP)
+class RabbitProvider(Provider):
+    broker = from_context(AioPikaBroker, scope=Scope.APP)
 
     @provide(scope=Scope.REQUEST)
-    async def get_scheduler(
-        self,
-        config: Config,
-        source_repository: SourceRepository,
-        logs_repository: UpdateLogRepository,
-        collector: NewsCollector,
-    ) -> Scheduler:
-        return Scheduler(
-            config=config,
-            source_repository=source_repository,
-            logs_repository=logs_repository,
-            collector=collector,
-        )
+    async def get_rabbit_publisher(self, rabbit: AioPikaBroker) -> RabbitPublisher:
+        return RabbitPublisher(rabbit=rabbit)

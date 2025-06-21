@@ -28,10 +28,21 @@ class SourceAdminService:
         if not sources:
             raise SourceNotFound
 
-        return [source.to_response_dto() for source in sources]
+        return [self.source_to_dto(source) for source in sources]
 
     async def delete_source(self, id: int) -> None:
         if not await self.repository.get_by_id(id=id):
             raise SourceNotFound
 
         return await self.repository.delete(id=id)
+
+    def source_to_dto(source: Source) -> SourceResponseDTO:
+        return SourceResponseDTO(
+            id=source.id,
+            name=source.name,
+            url=source.url,
+            type=source.type,
+            poll_interval=source.poll_interval,
+            last_updated=source.last_updated,
+            is_active=source.is_active,
+        )
