@@ -10,4 +10,6 @@ async def task_fetch_news(collector: FromDishka[NewsCollector]):
 
 
 def register_tasks(broker: AioPikaBroker) -> None:
-    broker.register_task(task_fetch_news, task_name="fetch_news")
+    broker.register_task(
+        task_fetch_news, task_name="fetch_news", schedule=[{"cron": "* * * * *"}]
+    )

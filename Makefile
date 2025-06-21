@@ -19,3 +19,6 @@ migrations:
 
 worker:
 	PYTHONPATH=$PYTHONPATH:. poetry run taskiq worker src.app.main:broker
+
+scheduler:
+	PYTHONPATH=$PYTHONPATH:. poetry run taskiq scheduler src.app.main:scheduler

@@ -4,10 +4,11 @@ from dotenv import load_dotenv
 
 from dishka.integrations.fastapi import setup_dishka as setup_fastapi_dishka
 from fastapi import FastAPI
+from taskiq import TaskiqScheduler
 from taskiq_aio_pika import AioPikaBroker
 import uvicorn
 
-from src.app.common.broker import setup_taskiq_broker
+from src.app.common.broker import create_scheduler, setup_taskiq_broker
 from src.app.common.di.setup import setup_ioc_container
 from src.app.common.config import Config, load_config
 from src.app.api.routers import router
@@ -31,6 +32,7 @@ def broker_startup_lifespan(
 
 config: Config = load_config()
 broker: AioPikaBroker = setup_taskiq_broker(config=config)
+scheduler: TaskiqScheduler = create_scheduler(broker=broker)
 container = setup_ioc_container(config=config, broker=broker)
 
 app = FastAPI(lifespan=broker_startup_lifespan(broker=broker))
