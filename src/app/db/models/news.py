@@ -3,6 +3,7 @@ from typing import List
 
 from sqlalchemy import (
     ARRAY,
+    JSON,
     Boolean,
     DateTime,
     Float,
@@ -13,7 +14,6 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.app.services.dto import SourceResponseDTO
 from src.app.db.models.base import Base
 
 
@@ -29,6 +29,9 @@ class Source(Base):
     last_fetched: Mapped[datetime.datetime] = mapped_column(DateTime, nullable=True)
     poll_interval: Mapped[float] = mapped_column(Float, nullable=False, default=30)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    req_params: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
+    res_obj: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
+
     news: Mapped[List["News"]] = relationship(back_populates="source")
     update_log: Mapped[List["UpdateLog"]] = relationship(back_populates="source")
 
@@ -40,7 +43,7 @@ class News(Base):
     title: Mapped[str] = mapped_column(Text, nullable=False)
     description: Mapped[str | None] = mapped_column(Text)
     full_text: Mapped[str | None] = mapped_column(Text)
-    url: Mapped[str] = mapped_column(String(512), nullable=False)
+    url: Mapped[str] = mapped_column(String(2048), nullable=False)
     published_at: Mapped[datetime.datetime] = mapped_column(DateTime)
     cluster_id: Mapped[int | None] = mapped_column(ForeignKey("clusters.id"))
     sentiment_score: Mapped[float | None] = mapped_column(Float)

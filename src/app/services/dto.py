@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import datetime
+from typing import Any, Dict
 
 
 @dataclass
@@ -8,6 +9,8 @@ class SourceCreateDTO:
     url: str
     type: str
     poll_interval: float
+    req_params: Dict[str, Any]
+    res_obj: Dict[str, Any]
 
 
 @dataclass

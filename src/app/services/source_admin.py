@@ -19,6 +19,8 @@ class SourceAdminService:
             url=source_data.url,
             type=source_data.type,
             poll_interval=source_data.poll_interval,
+            req_params=source_data.req_params,
+            res_obj=source_data.res_obj,
         )
 
         return await self.repository.create(source)
