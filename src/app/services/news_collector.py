@@ -1,7 +1,7 @@
 import hashlib
 from datetime import datetime
+import re
 from dateutil.parser import parse
-from os import getenv
 from typing import List
 
 import httpx
@@ -62,7 +62,9 @@ class NewsCollector:
         content = (
             f"{article[res_obj['title']]}{article.get(res_obj['description'], '')}"
         )
-        return hashlib.md5(content.encode()).hexdigest()
+        text = content.lower().strip()
+        normalize_text = re.sub(r"/s+", "", text)
+        return hashlib.sha256(normalize_text.encode()).hexdigest()
 
     async def collect_news(self) -> List[News]:
         sources = await self.source_repository.get_all()
