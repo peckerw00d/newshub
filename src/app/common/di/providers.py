@@ -6,6 +6,7 @@ from redis import Redis
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 from taskiq_aio_pika import AioPikaBroker
 
+from src.app.services.news_deduplicator import Deduplicator
 from src.app.db.repositories.news import NewsRepository, SourceRepository
 from src.app.db.repositories.logs import UpdateLogRepository
 from src.app.db.database import new_session_maker
@@ -64,8 +65,6 @@ class ServiceProvider(Provider):
     ) -> SourceAdminService:
         return SourceAdminService(repository=repository)
 
-
-class CollectorProvider(Provider):
     @provide(scope=Scope.REQUEST)
     async def get_news_collector(
         self,
@@ -78,6 +77,10 @@ class CollectorProvider(Provider):
             news_repository=news_repository,
             logs_repository=logs_repository,
         )
+
+    @provide(scope=Scope.REQUEST)
+    async def get_deduplicator(self, redis: Redis) -> Deduplicator:
+        return Deduplicator(redis=redis)
 
 
 class RabbitProvider(Provider):

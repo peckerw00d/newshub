@@ -6,7 +6,6 @@ from src.app.common.di.providers import (
     DBProvider,
     RepositoryProvider,
     ServiceProvider,
-    CollectorProvider,
     RabbitProvider,
 )
 
@@ -16,7 +15,6 @@ def setup_ioc_container(config: Config, broker: AioPikaBroker):
         DBProvider(),
         RepositoryProvider(),
         ServiceProvider(),
-        CollectorProvider(),
         RabbitProvider(),
         context={Config: config, AioPikaBroker: broker},
     )
