@@ -2,6 +2,7 @@ from typing import AsyncIterable
 
 from dishka import Provider, Scope, from_context, provide
 
+from redis import Redis
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 from taskiq_aio_pika import AioPikaBroker
 
@@ -31,6 +32,15 @@ class DBProvider(Provider):
     ) -> AsyncIterable[AsyncSession]:
         async with session_maker() as session:
             yield session
+
+    @provide(scope=Scope.REQUEST)
+    async def get_redis(self, config: Config) -> Redis:
+        return Redis(
+            host=config.redis.host,
+            port=config.redis.port,
+            db=config.redis.db,
+            decode_responses=config.redis.decode_response,
+        )
 
 
 class RepositoryProvider(Provider):

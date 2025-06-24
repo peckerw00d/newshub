@@ -48,7 +48,7 @@ class News(Base):
     cluster_id: Mapped[int | None] = mapped_column(ForeignKey("clusters.id"))
     sentiment_score: Mapped[float | None] = mapped_column(Float)
     sentiment_label: Mapped[str | None] = mapped_column(String(50))
-    hash: Mapped[str] = mapped_column(String(32), nullable=True)
+    hash: Mapped[str] = mapped_column(String(256), nullable=True)
     source: Mapped["Source"] = relationship(back_populates="news")
     cluster: Mapped["Cluster"] = relationship(back_populates="news")
     tags: Mapped[List["Tag"]] = relationship(

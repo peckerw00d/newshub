@@ -137,7 +137,7 @@ env.bak/
 venv.bak/
 
 alembic/
-
+redisdata/
 # Spyder project settings
 .spyderproject
 .spyproject
@@ -194,3 +194,5 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+
+logs/
