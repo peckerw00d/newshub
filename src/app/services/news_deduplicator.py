@@ -101,7 +101,7 @@ class Deduplicator:
 
     def _store_fingerprints(self, news_item, canonical_url, title_hash):
         url_key = f"url:{canonical_url}"
-        self.redis.set(url_key, news_item["id"], ex=int(self.url_ttl))
+        self.redis.set(url_key, title_hash, ex=int(self.url_ttl))
         self.local_url_cache.add(url_key)
 
         title_set_key = "simhash:title"
@@ -136,5 +136,3 @@ class Deduplicator:
         self.local_url_cache = {
             url for url in self.local_url_cache if self.redis.exists(url)
         }
-
-

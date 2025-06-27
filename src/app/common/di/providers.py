@@ -2,18 +2,18 @@ from typing import AsyncIterable
 
 from dishka import Provider, Scope, from_context, provide
 
+from faststream.rabbit import RabbitBroker
+
 from redis import Redis
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
-from taskiq_aio_pika import AioPikaBroker
 
-from src.app.services.news_deduplicator import Deduplicator
 from src.app.db.repositories.news import NewsRepository, SourceRepository
 from src.app.db.repositories.logs import UpdateLogRepository
 from src.app.db.database import new_session_maker
 
-from src.app.services.tasks.rabbit_publisher import RabbitPublisher
 from src.app.services.news_collector import NewsCollector
 from src.app.services.source_admin import SourceAdminService
+from src.app.services.news_deduplicator import Deduplicator
 
 from src.app.common.config import Config
 
@@ -59,6 +59,8 @@ class RepositoryProvider(Provider):
 
 
 class ServiceProvider(Provider):
+    broker = from_context(provides=RabbitBroker, scope=Scope.APP)
+
     @provide(scope=Scope.REQUEST)
     async def get_source_admin_service(
         self, repository: SourceRepository
@@ -81,11 +83,3 @@ class ServiceProvider(Provider):
     @provide(scope=Scope.REQUEST)
     async def get_deduplicator(self, redis: Redis) -> Deduplicator:
         return Deduplicator(redis=redis)
-
-
-class RabbitProvider(Provider):
-    broker = from_context(AioPikaBroker, scope=Scope.APP)
-
-    @provide(scope=Scope.REQUEST)
-    async def get_rabbit_publisher(self, rabbit: AioPikaBroker) -> RabbitPublisher:
-        return RabbitPublisher(rabbit=rabbit)
