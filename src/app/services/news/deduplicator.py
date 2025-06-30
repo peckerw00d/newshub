@@ -1,3 +1,4 @@
+import logging
 import re
 from datetime import timedelta
 import time
@@ -5,6 +6,8 @@ from urllib.parse import parse_qs, urlparse, urlunparse
 
 from redis import Redis
 from simhash import Simhash
+
+logger = logging.getLogger(__name__)
 
 
 class Deduplicator:
@@ -52,14 +55,13 @@ class Deduplicator:
     def is_duplicate(self, news_item):
         canonical_url = self.normalize_url(news_item["url"])
         url_key = f"url:{canonical_url}"
-
         if self._is_url_duplicate(url_key):
+            logger.debug(f"URL {canonical_url} найден в кэше")
             return True
-
         title_hash = self.calculate_simhash(news_item["title"])
         if self._is_simhash_duplicate("title", title_hash, self.title_threshold):
+            logger.debug(f"Заголовок похож на существующий (SimHash: {title_hash})")
             return True
-
         if (
             news_item.get("description")
             and len(news_item["description"]) > self.min_description_length
@@ -68,8 +70,10 @@ class Deduplicator:
             if self._is_simhash_duplicate(
                 "description", description_hash, self.description_threshold
             ):
+                logger.debug(
+                    f"Описание похоже на существующее (SimHash: {description_hash})"
+                )
                 return True
-
         self._store_fingerprints(news_item, canonical_url, title_hash)
         return False
 
@@ -131,8 +135,8 @@ class Deduplicator:
             for key in keys:
                 ttl = self.redis.ttl(key)
                 if ttl < 0:
+                    logger.info(f"Удаление устаревшей записи из Redis: {key}")
                     self.redis.delete(key)
-
         self.local_url_cache = {
             url for url in self.local_url_cache if self.redis.exists(url)
         }

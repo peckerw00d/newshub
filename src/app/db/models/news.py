@@ -64,4 +64,5 @@ class Cluster(Base):
     created_at: Mapped[datetime.datetime] = mapped_column(
         DateTime, server_default=func.now()
     )
+    centroid: Mapped[List[float]] = mapped_column(ARRAY(Float))
     news: Mapped[List["News"]] = relationship(back_populates="cluster")

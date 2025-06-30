@@ -7,7 +7,6 @@ from sqlalchemy.orm import DeclarativeBase, mapped_column, Mapped
 
 from src.app.db.repositories.base import Repository
 
-
 @pytest_asyncio.fixture(scope="function")
 async def mock_async_session():
     session = AsyncMock(spec=AsyncSession)

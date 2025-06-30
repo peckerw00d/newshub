@@ -11,9 +11,9 @@ from src.app.db.repositories.news import NewsRepository, SourceRepository
 from src.app.db.repositories.logs import UpdateLogRepository
 from src.app.db.database import new_session_maker
 
-from src.app.services.news_collector import NewsCollector
+from src.app.services.news.collector import NewsCollector
 from src.app.services.source_admin import SourceAdminService
-from src.app.services.news_deduplicator import Deduplicator
+from src.app.services.news.deduplicator import Deduplicator
 
 from src.app.common.config import Config
 

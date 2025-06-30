@@ -1,4 +1,3 @@
-import asyncio
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from faststream.rabbit import RabbitBroker

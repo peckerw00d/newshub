@@ -16,7 +16,7 @@ async def add_source(
 ):
     try:
         source_data = SourceCreateDTO(**data.model_dump())
-        new_source = await source_admin_service.add_source(source_data=source_data)
+        await source_admin_service.add_source(source_data=source_data)
         return {"message": "The source was added successfully!"}
 
     except SourceAlreadyExists:
@@ -55,5 +55,5 @@ async def delete_source(id: int, source_admin_service: FromDishka[SourceAdminSer
 
     except SourceNotFound:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, details="No sources found!"
+            status_code=status.HTTP_404_NOT_FOUND, detail="No sources found!"
         )

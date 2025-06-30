@@ -16,9 +16,3 @@ run_unit_tests:
 migrations:
 	alembic revision --autogenerate
 	alembic upgrade head
-
-worker:
-	PYTHONPATH=$PYTHONPATH:. poetry run taskiq worker src.app.main:broker
-
-scheduler:
-	PYTHONPATH=$PYTHONPATH:. poetry run taskiq scheduler src.app.main:scheduler

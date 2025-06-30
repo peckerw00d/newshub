@@ -27,13 +27,12 @@ class SourceAdminCreate(SourceAdminBase):
                     "pageSize": 20,
                 },
                 "res_obj": {
-                    "description": "description",
-                    "full_text": "content",
-                    "result": "results",
-                    "title": "title",
-                    "url": "link",
-                    "published_at": "pubDate",
-                },
+                  "title": "results[].headline.main",
+                  "description": "results[].abstract",
+                  "full_text": "results[].body",
+                  "url": "results[].web_url",
+                  "published_at": "results[].pub_date"
+                }
             }
         }
 

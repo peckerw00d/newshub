@@ -1,29 +1,36 @@
 from datetime import datetime
-from typing import AsyncGenerator, List
+import logging
 
 from dishka.integrations.faststream import FromDishka
 from faststream.rabbit import RabbitRouter, RabbitBroker
 
 from src.app.db.models.news import News
 from src.app.db.repositories.news import NewsRepository
-from src.app.services.news_deduplicator import Deduplicator
-from src.app.services.news_collector import NewsCollector
+from src.app.services.news.deduplicator import Deduplicator
+from src.app.services.news.collector import NewsCollector
 
 
 AMQPRouter = RabbitRouter()
 
+logger = logging.getLogger(__name__)
+
 
 @AMQPRouter.subscriber("collect_queue")
-async def task_fetch_news(
+async def fetch_news(
     msg: dict, collector: FromDishka[NewsCollector], broker: FromDishka[RabbitBroker]
 ):
-    news_items = await collector.collect_news()
-    for news_item in news_items:
-        await broker.publish(news_item, "dedup_queue")
+    logger.info("Начало обработки сообщения из очереди collect_queue")
+    try:
+        news_items = await collector.collect_news()
+        logger.info(f"Собрано {len(news_items)} новостей")
+        for news_item in news_items:
+            await broker.publish(news_item, "dedup_queue")
+    except Exception as err:
+        logger.error(f"Ошибка в task_fetch_news: {err}")
 
 
 @AMQPRouter.subscriber("dedup_queue")
-async def task_process_news_item(
+async def deduplicate_news(
     news_item: dict,
     deduplicator: FromDishka[Deduplicator],
     news_repo: FromDishka[NewsRepository],
