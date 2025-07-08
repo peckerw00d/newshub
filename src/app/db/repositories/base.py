@@ -1,7 +1,7 @@
 from typing import List, Optional, Type, TypeVar, Generic
 from abc import ABC, abstractmethod
 
-from sqlalchemy import Result, Select
+from sqlalchemy import Result, Select, Update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.app.db.models.base import Base
@@ -48,10 +48,14 @@ class Repository(RepositoryInterface[T, ID]):
         await self.session.commit()
         return obj
 
-    async def update(self, obj: T) -> T:
-        await self.session.merge(obj)
+    async def update(self, id: int, data: dict) -> T:
+        stmt = Update(self.model).where(self.model.id == id).values(**data).execution_options(synchronize_session="fetch")
+        await self.session.execute(stmt)
         await self.session.commit()
-        return obj
+
+        result = await self.session.execute(Select(self.model).where(self.model.id == id))
+        return result.scalars().first()
+
 
     async def delete(self, id: ID) -> None:
         obj = await self.get_by_id(id)

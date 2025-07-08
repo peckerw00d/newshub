@@ -72,12 +72,12 @@ class ServiceProvider(Provider):
         self,
         source_repository: SourceRepository,
         news_repository: NewsRepository,
-        logs_repository: UpdateLogRepository,
+        log_repository: UpdateLogRepository,
     ) -> NewsCollector:
         return NewsCollector(
             source_repository=source_repository,
             news_repository=news_repository,
-            logs_repository=logs_repository,
+            log_repository=log_repository,
         )
 
     @provide(scope=Scope.REQUEST)
