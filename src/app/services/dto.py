@@ -21,11 +21,16 @@ class SourceResponseDTO(SourceCreateDTO):
 
 
 @dataclass
+class SourceUpdateDTO(SourceCreateDTO):
+    is_active: bool
+
+
+@dataclass
 class NewsItemDTO:
     source_id: int
     title: str
     description: str
     url: str
     full_text: str
-    published_at: datetime
+    published_at: datetime.datetime
     hash: str

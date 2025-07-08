@@ -3,7 +3,7 @@ from typing import List
 from src.app.services.exceptions import SourceAlreadyExists, SourceNotFound
 from src.app.db.models.news import Source
 from src.app.db.repositories.base import RepositoryInterface
-from src.app.services.dto import SourceCreateDTO, SourceResponseDTO
+from src.app.services.dto import SourceCreateDTO, SourceResponseDTO, SourceUpdateDTO
 
 
 class SourceAdminService:
@@ -32,13 +32,37 @@ class SourceAdminService:
 
         return [self.source_to_dto(source) for source in sources]
 
+    async def get_source(self, id: int) -> SourceResponseDTO:
+        source = await self.repository.get_by_id(id=id)
+        if not source:
+            raise SourceNotFound
+
+        return self.source_to_dto(source)
+
+    async def update_source(self, id: int, data: SourceUpdateDTO) -> SourceResponseDTO:
+        source = await self.repository.get_by_id(id=id)
+        if not source:
+            raise SourceNotFound
+
+        source.name = data.name
+        source.url = data.url
+        source.type = data.type
+        source.poll_interval = data.poll_interval
+        source.req_params = data.req_params
+        source.res_obj = data.res_obj
+        source.is_active = data.is_active
+
+        updated_source = await self.repository.update(id, data.__dict__)
+
+        return self.source_to_dto(updated_source)
+
     async def delete_source(self, id: int) -> None:
         if not await self.repository.get_by_id(id=id):
             raise SourceNotFound
 
         return await self.repository.delete(id=id)
 
-    def source_to_dto(source: Source) -> SourceResponseDTO:
+    def source_to_dto(self, source: Source) -> SourceResponseDTO:
         return SourceResponseDTO(
             id=source.id,
             name=source.name,
@@ -47,4 +71,6 @@ class SourceAdminService:
             poll_interval=source.poll_interval,
             last_updated=source.last_updated,
             is_active=source.is_active,
+            req_params=source.req_params,
+            res_obj=source.res_obj,
         )

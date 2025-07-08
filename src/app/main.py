@@ -37,13 +37,13 @@ async def lifespan(app: FastAPI):
     faststream_app = get_faststream_app()
     logger.info("Попытка запустить FastStream брокер...")
     try:
-        await faststream_app.broker.start()
+        # await faststream_app.broker.start()
         logger.info("FastStream брокер успешно запущен!")
     except Exception as e:
         logger.error(f"Ошибка подключения к брокеру: {e}")
     yield
     logger.info("Остановка FastStream брокера...")
-    await faststream_app.broker.close()
+    # await faststream_app.broker.close()
 
 
 def get_faststream_app() -> FastStream:
