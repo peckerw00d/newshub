@@ -1,11 +1,14 @@
-from fastapi import APIRouter, HTTPException, status
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
+from fastapi import APIRouter, HTTPException, status
 
+from src.app.api.schemas import (
+    SourceAdminCreate,
+    SourceAdminResponse,
+    SourceAdminUpdate,
+)
+from src.app.services.admin.source import SourceAdminService
+from src.app.services.dto import SourceCreateDTO, SourceUpdateDTO
 from src.app.services.exceptions import SourceAlreadyExists, SourceNotFound
-from src.app.api.schemas import SourceAdminCreate, SourceAdminResponse, SourceAdminUpdate
-from src.app.services.source_admin import SourceAdminService
-from src.app.services.dto import SourceCreateDTO
-
 
 router = APIRouter(route_class=DishkaRoute, prefix="/admin", tags=["Admin"])
 
@@ -70,7 +73,8 @@ async def get_source(id: int, source_admin_service: FromDishka[SourceAdminServic
 @router.put("/sources/{id}")
 async def update_source(id: int, data: SourceAdminUpdate, source_admin_service: FromDishka[SourceAdminService]):
     try:
-        return await source_admin_service.update_source(id=id, data=data)
+        source_data = SourceUpdateDTO(**data.model_dump())
+        return await source_admin_service.update_source(id=id, source_data=source_data)
 
     except SourceNotFound:
         raise HTTPException(

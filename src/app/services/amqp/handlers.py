@@ -1,14 +1,13 @@
-from datetime import datetime
 import logging
+from datetime import datetime
 
 from dishka.integrations.faststream import FromDishka
-from faststream.rabbit import RabbitRouter, RabbitBroker
+from faststream.rabbit import RabbitBroker, RabbitRouter
 
 from src.app.db.models.news import News
 from src.app.db.repositories.news import NewsRepository
-from src.app.services.news.deduplicator import Deduplicator
-from src.app.services.news.collector import NewsCollector
-
+from src.app.services.news_pipeline.collector import NewsCollector
+from src.app.services.news_pipeline.deduplicator import Deduplicator
 
 AMQPRouter = RabbitRouter()
 

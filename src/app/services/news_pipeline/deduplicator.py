@@ -1,7 +1,7 @@
 import logging
 import re
-from datetime import timedelta
 import time
+from datetime import timedelta
 from urllib.parse import parse_qs, urlparse, urlunparse
 
 from redis import Redis
@@ -23,7 +23,6 @@ class Deduplicator:
         self.local_url_cache = set()
 
     def normalize_url(self, url):
-
         parsed = urlparse(url)
 
         query_params = parse_qs(parsed.query)
@@ -45,7 +44,6 @@ class Deduplicator:
         )
 
     def calculate_simhash(self, text, hash_bits=64):
-
         if not text:
             return 0
 

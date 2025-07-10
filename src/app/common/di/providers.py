@@ -1,21 +1,18 @@
 from typing import AsyncIterable
 
 from dishka import Provider, Scope, from_context, provide
-
 from faststream.rabbit import RabbitBroker
-
 from redis import Redis
-from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
-
-from src.app.db.repositories.news import NewsRepository, SourceRepository
-from src.app.db.repositories.logs import UpdateLogRepository
-from src.app.db.database import new_session_maker
-
-from src.app.services.news.collector import NewsCollector
-from src.app.services.source_admin import SourceAdminService
-from src.app.services.news.deduplicator import Deduplicator
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from src.app.common.config import Config
+from src.app.db.database import new_session_maker
+from src.app.db.repositories.logs import UpdateLogRepository
+from src.app.db.repositories.news import NewsRepository, SourceRepository
+from src.app.services.admin.source import SourceAdminService
+from src.app.services.news import NewsService
+from src.app.services.news_pipeline.collector import NewsCollector
+from src.app.services.news_pipeline.deduplicator import Deduplicator
 
 
 class DBProvider(Provider):
@@ -66,6 +63,10 @@ class ServiceProvider(Provider):
         self, repository: SourceRepository
     ) -> SourceAdminService:
         return SourceAdminService(repository=repository)
+
+    @provide(scope=Scope.REQUEST)
+    async def get_news_service(self, repository: NewsRepository) -> NewsService:
+        return NewsService(news_repository=repository)
 
     @provide(scope=Scope.REQUEST)
     async def get_news_collector(

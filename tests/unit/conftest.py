@@ -1,11 +1,12 @@
 from unittest.mock import AsyncMock, MagicMock
-import pytest_asyncio
 
+import pytest_asyncio
 from sqlalchemy import Integer, String
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import DeclarativeBase, mapped_column, Mapped
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 from src.app.db.repositories.base import Repository
+
 
 @pytest_asyncio.fixture(scope="function")
 async def mock_async_session():

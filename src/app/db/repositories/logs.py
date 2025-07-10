@@ -1,7 +1,7 @@
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from src.app.db.models.logs import UpdateLog
 from src.app.db.repositories.base import Repository
-
-from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class UpdateLogRepository(Repository[UpdateLog, int]):

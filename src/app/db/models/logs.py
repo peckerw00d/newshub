@@ -1,8 +1,9 @@
 import datetime
-from src.app.db.models import Base
 
 from sqlalchemy import DateTime, ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from src.app.db.models import Base
 
 
 class UpdateLog(Base):

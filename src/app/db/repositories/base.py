@@ -1,11 +1,10 @@
-from typing import List, Optional, Type, TypeVar, Generic
 from abc import ABC, abstractmethod
+from typing import Generic, List, Optional, Type, TypeVar
 
 from sqlalchemy import Result, Select, Update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.app.db.models.base import Base
-
 
 T = TypeVar("T")
 ID = TypeVar("ID")

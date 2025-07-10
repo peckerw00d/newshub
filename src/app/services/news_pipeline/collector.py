@@ -1,13 +1,13 @@
-from datetime import datetime
 import hashlib
 import logging
 import re
-from dateutil.parser import parse
-from typing import List, Any
+from asyncio import CancelledError
+from datetime import datetime
+from typing import Any, List
 
 import httpx
 import jmespath
-from asyncio import CancelledError
+from dateutil.parser import parse
 
 from src.app.db.models import Source, UpdateLog
 from src.app.db.repositories.base import RepositoryInterface
@@ -48,7 +48,9 @@ class NewsCollector:
             logger.error(f"Ошибка API-запроса: {str(err)}")
             raise
         except CancelledError:
-            logger.warning("Запрос был отменён (возможно, таймаут или завершение работы)")
+            logger.warning(
+                "Запрос был отменён (возможно, таймаут или завершение работы)"
+            )
             raise
         except Exception as e:
             logger.warning(f"Не удалось получить данные с {source.url}: {e}")
@@ -61,7 +63,7 @@ class NewsCollector:
 
     def _extract(self, expr: str, article: dict) -> Any:
         try:
-            return jmespath.search(expr.split("[]")[-1].lstrip('.'), article)
+            return jmespath.search(expr.split("[]")[-1].lstrip("."), article)
         except Exception as e:
             logger.warning(f"JMESPath `{expr}` не удалось применить: {e}")
             return None
@@ -105,11 +107,13 @@ class NewsCollector:
             update_log_data = {
                 "source_id": source.id,
                 "status": "started",
-                "start_time": start_time
+                "start_time": start_time,
             }
 
             try:
-                log_entry = await self.log_repository.create(UpdateLog(**update_log_data))
+                log_entry = await self.log_repository.create(
+                    UpdateLog(**update_log_data)
+                )
 
                 articles = await self._fetch_from_api(source)
 
@@ -118,10 +122,24 @@ class NewsCollector:
                     if news_item:
                         news_items.append(news_item)
 
-                await self.log_repository.update(log_entry.id, {"status": "success", "end_time": datetime.now(), "error_message": None})
+                await self.log_repository.update(
+                    log_entry.id,
+                    {
+                        "status": "success",
+                        "end_time": datetime.now(),
+                        "error_message": None,
+                    },
+                )
 
             except Exception as err:
                 logger.error(f"Error collecting news from source {source.name}: {err}")
-                await self.log_repository.update(log_entry.id, {"status": "failed", "end_time": datetime.now(), "error_message": str(err)})
+                await self.log_repository.update(
+                    log_entry.id,
+                    {
+                        "status": "failed",
+                        "end_time": datetime.now(),
+                        "error_message": str(err),
+                    },
+                )
 
         return news_items

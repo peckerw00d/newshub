@@ -1,5 +1,4 @@
 from dishka import make_async_container
-
 from faststream.rabbit import RabbitBroker
 
 from src.app.common.config import Config
