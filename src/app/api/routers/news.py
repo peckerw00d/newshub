@@ -1,8 +1,8 @@
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
 from fastapi import APIRouter
 
-from app.common.pagination import decode_cursor, encode_cursor
 from src.app.api.schemas.news import NewsCursorPage, NewsResponse
+from src.app.common.pagination import decode_cursor, encode_cursor
 from src.app.services.news import NewsService
 
 router = APIRouter(
