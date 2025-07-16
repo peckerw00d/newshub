@@ -3,7 +3,7 @@ from typing import Optional
 
 from sqlalchemy import Result, Select, tuple_
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.sql.expression import func
+from sqlalchemy.sql.expression import func, text
 
 from src.app.db.models.news import Cluster, News, Source
 from src.app.db.repositories.base import Repository
@@ -60,9 +60,12 @@ class NewsRepository(Repository[News, int]):
         self, query: str, limit: int, cursor: tuple[datetime, str] | None = None
     ):
         search_vector = func.setweight(
-            func.to_tsvector("english", func.coalesce(News.title, "")), "A"
-        ) + func.setweight(
-            func.to_tsvector("english", func.coalesce(News.description, "")), "B"
+            func.to_tsvector("english", func.coalesce(News.title, "")), text("'A'")
+        ).op("||")(
+            func.setweight(
+                func.to_tsvector("english", func.coalesce(News.description, "")),
+                text("'B'"),
+            )
         )
         ts_query = func.plainto_tsquery("english", query)
 
