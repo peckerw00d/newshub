@@ -12,5 +12,5 @@ def start_scheduler(broker: RabbitBroker):
     async def scheduled_task():
         await trigger_first_worker(broker)
 
-    scheduler.add_job(scheduled_task, "interval", seconds=5)
+    scheduler.add_job(scheduled_task, "interval", seconds=60)
     scheduler.start()

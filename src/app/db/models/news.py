@@ -13,6 +13,7 @@ from sqlalchemy import (
     func,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.schema import Index
 
 from src.app.db.models.base import Base
 
@@ -36,6 +37,19 @@ class Source(Base):
     update_log: Mapped[List["UpdateLog"]] = relationship(back_populates="source")
 
 
+def create_tsvector(*args):
+    exp = args[0]
+    for e in args[1:]:
+        exp += " " + e
+    return func.ts_vector("english", exp)
+
+
+def create_weighted_tsvector(title, description):
+    return func.setweight(
+        func.to_tsvector("english", func.coalesce(title, "")), "A"
+    ) + func.setweight(func.to_tsvector("english", func.coalesce(description, "")), "B")
+
+
 class News(Base):
     __tablename__ = "news"
 
@@ -54,6 +68,10 @@ class News(Base):
     tags: Mapped[List["Tag"]] = relationship(
         secondary="news_tags", back_populates="news", lazy="raise"
     )
+
+    __ts_vector__ = create_weighted_tsvector(title, description)
+
+    __table_args__ = (Index("idx_article_fts", __ts_vector__, postgresql_using="gin"),)
 
 
 class Cluster(Base):
