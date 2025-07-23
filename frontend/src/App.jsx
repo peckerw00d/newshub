@@ -1,15 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import Header from "./components/Header";
-import Main from "./components/Main";
+import SearchBar from "./components/SearchBar";
+import NewsCards from "./components/NewsCards";
 import Footer from "./components/Footer";
 
 function App() {
+  const [query, setQuery] = useState("");
+
   return (
-    <div className="App">
+    <>
       <Header />
-      <Main />
+      <SearchBar onSearch={setQuery} />
+      <NewsCards searchQuery={query} />
       <Footer />
-    </div>
+    </>
   );
 }
 

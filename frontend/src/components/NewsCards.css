@@ -17,6 +17,17 @@
     overflow: hidden;
 }
 
+.news-card {
+    transition:
+        border 0.3s ease,
+        box-shadow 0.3s ease;
+    border: 1px solid transparent; /* по умолчанию */
+}
+
+.news-card:hover {
+    border: 2px solid #2e3192; /* синий цвет */
+    box-shadow: 0 4px 12px rgba(46, 49, 146, 0.2); /* мягкая тень */
+}
 .news-card-footer {
     margin-top: auto;
     display: flex;

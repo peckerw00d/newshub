@@ -1,24 +1,26 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./NewsCards.css";
 
-const API_URL = "http://localhost:8000/api/news";
-
-const NewsCards = () => {
+const NewsCards = ({ searchQuery }) => {
   const [news, setNews] = useState([]);
   const [cursor, setCursor] = useState(null);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
 
-  const fetchNews = async () => {
+  const API_URL = searchQuery
+    ? `http://localhost:8000/api/news/search/?query=${encodeURIComponent(searchQuery)}`
+    : "http://localhost:8000/api/news";
+
+  const fetchNews = async (reset = false) => {
     setLoading(true);
     try {
-      const url = cursor ? `${API_URL}?cursor=${cursor}` : API_URL;
+      const url = cursor && !reset ? `${API_URL}&cursor=${cursor}` : API_URL;
       const response = await fetch(url);
       const data = await response.json();
 
-      setNews((prev) => [...prev, ...data.items]);
+      setNews((prev) => (reset ? data.items : [...prev, ...data.items]));
       setCursor(data.next_cursor);
-      setHasMore(!!data.next_cursor); // если курсора нет — больше данных нет
+      setHasMore(!!data.next_cursor);
     } catch (error) {
       console.error("Ошибка загрузки новостей:", error);
     } finally {
@@ -26,8 +28,14 @@ const NewsCards = () => {
     }
   };
 
+  // Загрузка при смене поискового запроса
   useEffect(() => {
-    fetchNews(); // первая загрузка
+    setCursor(null);
+    fetchNews(true); // reset = true
+  }, [searchQuery]);
+
+  useEffect(() => {
+    if (!searchQuery) fetchNews(true); // первая загрузка
   }, []);
 
   return (
@@ -58,11 +66,7 @@ const NewsCards = () => {
 
       {hasMore && (
         <div className="load-more-wrapper">
-          <button
-            className="load-more-button"
-            onClick={fetchNews}
-            disabled={loading}
-          >
+          <button className="load-more-button" onClick={() => fetchNews()}>
             {loading ? "Загрузка..." : "Загрузить ещё"}
           </button>
         </div>
@@ -70,5 +74,4 @@ const NewsCards = () => {
     </div>
   );
 };
-
 export default NewsCards;
