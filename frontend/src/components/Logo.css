@@ -1,0 +1,24 @@
+/* src/components/Logo.css */
+.logo {
+    display: flex;
+    align-items: center;
+    background-color: #ffffff; /* весь контейнер — белый */
+    border-radius: 6px; /* скругление контейнера */
+    padding: 6px 12px; /* внутренние отступы */
+}
+
+.logo-news {
+    color: #2e3192; /* синий текст */
+    font-size: 20px;
+    font-weight: bold;
+    margin-right: 8px; /* отступ между News и Hub */
+}
+
+.logo-hub {
+    background-color: #2e3192; /* синий фон только за Hub */
+    color: #ffffff; /* белый текст Hub */
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 4px; /* скругление мелкого прямоугольника */
+    padding: 4px 8px; /* отступы внутри Hub */
+}

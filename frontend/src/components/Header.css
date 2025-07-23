@@ -1,0 +1,49 @@
+.app-header {
+    width: 100%;
+    max-width: 1920px;
+    height: 80px;
+    background-color: #2e3192;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 0 128px;
+    gap: 10px;
+}
+
+/* Логотип */
+.logo-img {
+    height: 66px;
+    width: 194px;
+    object-fit: contain;
+    flex-shrink: 0;
+    margin: 64px;
+}
+
+.header-nav {
+    display: flex;
+    justify-content: flex-start;
+    gap: 64px; /* или 24px, на твой вкус */
+    flex: 1;
+}
+
+.nav-button {
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 18px; /* увеличим размер */
+    font-weight: 600; /* немного жирнее */
+    letter-spacing: 0.5px; /* чуть больше межбуквенный интервал */
+    cursor: pointer;
+    padding: 8px 12px;
+    transition: opacity 0.2s;
+}
+
+.nav-button:hover {
+    opacity: 0.8;
+}

@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* общие переменные, если нужно */
+:root {
+    --font-sans: "Inter", sans-serif;
+}
+
+body {
+    @apply bg-background font-sans text-accent;
+}
+
+/* утилиты для компонента ArticleCard */
+@layer components {
+    .card {
+        @apply bg-surface shadow-card rounded-lg overflow-hidden;
+    }
+    .divider {
+        @apply h-px bg-divider w-full;
+    }
+}

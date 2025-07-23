@@ -1,0 +1,75 @@
+.news-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 640px);
+    gap: 40px 40px;
+    justify-content: center;
+    padding: 20px 0;
+}
+
+.news-card {
+    display: flex;
+    flex-direction: column;
+    width: 640px;
+    height: 776px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.news-card-footer {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    font-size: 14px;
+    color: #777;
+    border-top: 1px solid #eee; /* лёгкое отделение */
+}
+
+.news-card-photo {
+    height: 40%; /* Около 1/3 высоты */
+    background-color: #ddd; /* Заглушка цвета */
+    width: 100%;
+    object-fit: cover;
+}
+
+.news-card-content {
+    height: 40%;
+    padding: 20px 24px 24px 24px; /* немного больше снизу */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* чтобы содержимое шло сверху вниз */
+    background-color: #fff;
+    color: #000;
+}
+
+.news-card-content h3 {
+    margin: 0 0 20px 0; /* отступ снизу 20px */
+    font-weight: 700;
+    font-size: 28px;
+    line-height: 1.2;
+    color: #000;
+    padding-bottom: 0; /* убираем border-bottom */
+    border-bottom: none;
+}
+
+.news-card-content p {
+    margin: 0;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #333;
+}
+
+.news-card-meta {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    color: #777;
+    margin-top: 32px;
+}

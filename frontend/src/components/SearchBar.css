@@ -1,0 +1,33 @@
+.search-bar-wrapper {
+    position: relative;
+    width: 537px;
+    margin: 20px auto;
+}
+
+.search-input {
+    width: 100%;
+    height: 66px;
+    border-radius: 33px;
+    border: 1px solid #ccc;
+    padding: 0 50px 0 20px; /* правый padding под иконку */
+    font-size: 18px;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+.search-input:focus {
+    border-color: #2e3192;
+    box-shadow: 0 0 5px rgba(46, 49, 146, 0.5);
+}
+
+.search-icon {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none; /* чтобы иконка не мешала кликам */
+    stroke: #2e3192;
+    width: 24px;
+    height: 24px;
+}

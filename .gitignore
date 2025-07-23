@@ -70,7 +70,6 @@ instance/
 
 # Sphinx documentation
 docs/_build/
-
 # PyBuilder
 .pybuilder/
 target/
@@ -196,3 +195,4 @@ cython_debug/
 .cursorindexingignore
 
 logs/
+node_modules/

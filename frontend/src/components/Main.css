@@ -1,0 +1,13 @@
+/* src/components/Main.css */
+.main-content {
+    background-color: #e6e6e6;
+    min-height: calc(100vh - 80px); /* высота окна минус шапка */
+    padding: 40px;
+}
+
+.main-placeholder {
+    font-size: 24px;
+    color: #333;
+    text-align: center;
+    padding: 100px 0;
+}

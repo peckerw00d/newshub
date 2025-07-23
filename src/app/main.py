@@ -7,6 +7,7 @@ from dishka.integrations import fastapi as fastapi_integration
 from dishka.integrations import faststream as faststream_integration
 from dotenv import load_dotenv
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from faststream import FastStream
 
 from src.app.api.routers import router
@@ -16,7 +17,6 @@ from src.app.common.broker import (
 from src.app.common.config import Config, load_config
 from src.app.common.di.setup import setup_ioc_container
 from src.app.common.logging import LOGGING_CONFIG
-from src.app.common.scheduler import start_scheduler
 from src.app.services.amqp.handlers import AMQPRouter
 
 load_dotenv()
@@ -49,7 +49,7 @@ def get_faststream_app() -> FastStream:
     faststream_integration.setup_dishka(container, faststream_app, auto_inject=True)
     broker.include_router(AMQPRouter)
 
-    start_scheduler(broker)
+    # start_scheduler(broker)
 
     logger.debug("FastStream приложение инициализировано")
     return faststream_app
@@ -58,6 +58,13 @@ def get_faststream_app() -> FastStream:
 def get_fastapi_app():
     fastapi_app = FastAPI(lifespan=lifespan)
     fastapi_app.include_router(router=router)
+    fastapi_app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["http://localhost:5173"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
     fastapi_integration.setup_dishka(container, fastapi_app)
 

@@ -1,0 +1,58 @@
+[
+  {
+    "id": 1,
+    "title": "Заголовок первой новости",
+    "description": "Краткое описание первой новости...",
+    "image": "https://via.placeholder.com/640x310",
+    "date": "23 июля 2025",
+    "author": "Автор"
+  },
+  {
+    "id": 2,
+    "title": "Заголовок второй новости",
+    "description": "Описание второй новости...",
+    "image": "https://via.placeholder.com/640x310",
+    "date": "22 июля 2025",
+    "author": "Автор"
+  },
+  {
+    "id": 3,
+    "title": "Заголовок третьей новости",
+    "description": "Описание второй новости...",
+    "image": "https://via.placeholder.com/640x310",
+    "date": "22 июля 2025",
+    "author": "Автор"
+  },
+  {
+    "id": 4,
+    "title": "Заголовок четвертой новости",
+    "description": "Описание второй новости...",
+    "image": "https://via.placeholder.com/640x310",
+    "date": "22 июля 2025",
+    "author": "Автор"
+  },
+  {
+    "id": 5,
+    "title": "Заголовок пятой новости",
+    "description": "Описание второй новости...",
+    "image": "https://via.placeholder.com/640x310",
+    "date": "22 июля 2025",
+    "author": "Автор"
+  },
+  {
+    "id": 6,
+    "title": "Заголовок шестой новости",
+    "description": "Описание второй новости...",
+    "image": "https://via.placeholder.com/640x310",
+    "date": "22 июля 2025",
+    "author": "Автор"
+  },
+  {
+    "id": 7,
+    "title": "Заголовок седьмой новости",
+    "description": "Описание второй новости...",
+    "image": "https://via.placeholder.com/640x310",
+    "date": "22 июля 2025",
+    "author": "Автор"
+  }
+]
