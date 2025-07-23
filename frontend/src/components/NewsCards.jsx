@@ -1,35 +1,44 @@
 import React, { useEffect, useState } from "react";
 import "./NewsCards.css";
-import newsData from "../data/newsData.json";
 
-const PAGE_SIZE = 4;
+const API_URL = "http://localhost:8000/api/news";
 
 const NewsCards = () => {
   const [news, setNews] = useState([]);
-  const [cursor, setCursor] = useState(0);
+  const [cursor, setCursor] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+
+  const fetchNews = async () => {
+    setLoading(true);
+    try {
+      const url = cursor ? `${API_URL}?cursor=${cursor}` : API_URL;
+      const response = await fetch(url);
+      const data = await response.json();
+
+      setNews((prev) => [...prev, ...data.items]);
+      setCursor(data.next_cursor);
+      setHasMore(!!data.next_cursor); // если курсора нет — больше данных нет
+    } catch (error) {
+      console.error("Ошибка загрузки новостей:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    // Первичная загрузка
-    const initialNews = newsData.slice(0, PAGE_SIZE);
-    setNews(initialNews);
-    setCursor(PAGE_SIZE);
+    fetchNews(); // первая загрузка
   }, []);
-
-  const handleLoadMore = () => {
-    const nextSlice = newsData.slice(cursor, cursor + PAGE_SIZE);
-    setNews((prev) => [...prev, ...nextSlice]);
-    setCursor((prev) => prev + PAGE_SIZE);
-  };
 
   return (
     <div>
       <section className="news-cards">
-        {news.map((item) => (
-          <div key={item.id} className="news-card">
+        {news.map((item, index) => (
+          <div key={index} className="news-card">
             <div
               className="news-card-photo"
               style={{
-                backgroundImage: `url(${item.image})`,
+                backgroundImage: `url(${item.url})`,
                 backgroundSize: "cover",
               }}
             />
@@ -38,17 +47,23 @@ const NewsCards = () => {
               <p>{item.description}</p>
             </div>
             <div className="news-card-footer">
-              <span className="news-date">{item.date}</span>
-              <span className="news-author">{item.author}</span>
+              <span className="news-date">
+                {new Date(item.published_at).toLocaleDateString("ru-RU")}
+              </span>
+              <span className="news-author">NewsHub</span>
             </div>
           </div>
         ))}
       </section>
 
-      {cursor < newsData.length && (
+      {hasMore && (
         <div className="load-more-wrapper">
-          <button className="load-more-button" onClick={handleLoadMore}>
-            Загрузить ещё
+          <button
+            className="load-more-button"
+            onClick={fetchNews}
+            disabled={loading}
+          >
+            {loading ? "Загрузка..." : "Загрузить ещё"}
           </button>
         </div>
       )}
