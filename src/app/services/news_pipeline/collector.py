@@ -38,7 +38,7 @@ class NewsCollector:
 
     async def _create_news_item(self, article: dict, source) -> dict:
         try:
-            res = source.res_obj
+            res = source.res_obj or {}
             published_raw = self.extractor.extract(res["published_at"], article)
             published_at = self.extractor.parse_date(published_raw)
             title = self.extractor.extract(res["title"], article) or ""

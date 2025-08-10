@@ -17,6 +17,7 @@ from src.app.common.broker import (
 from src.app.common.config import Config, load_config
 from src.app.common.di.setup import setup_ioc_container
 from src.app.common.logging import LOGGING_CONFIG
+from src.app.common.scheduler import start_scheduler
 from src.app.services.amqp.handlers import AMQPRouter
 
 load_dotenv()
@@ -49,7 +50,7 @@ def get_faststream_app() -> FastStream:
     faststream_integration.setup_dishka(container, faststream_app, auto_inject=True)
     broker.include_router(AMQPRouter)
 
-    # start_scheduler(broker)
+    start_scheduler(broker)
 
     logger.debug("FastStream приложение инициализировано")
     return faststream_app

@@ -1,5 +1,6 @@
 from typing import AsyncIterable
 
+import httpx
 from dishka import Provider, Scope, from_context, provide
 from faststream.rabbit import RabbitBroker
 from redis import Redis
@@ -74,18 +75,26 @@ class ServiceProvider(Provider):
     async def get_news_service(self, repository: NewsRepository) -> NewsService:
         return NewsService(news_repository=repository)
 
+    @provide(scope=Scope.APP)
+    async def get_http_client(self) -> httpx.AsyncClient:
+        return httpx.AsyncClient()
+
     @provide(scope=Scope.REQUEST)
     async def get_api_collector(
-        self, extractor: ArticleExtractor, hash_service: HashService
+        self,
+        extractor: ArticleExtractor,
+        hash_service: HashService,
+        client: httpx.AsyncClient,
     ) -> APICollector:
-        return APICollector(extractor=extractor, hash_service=hash_service)
+        return APICollector(
+            extractor=extractor, hash_service=hash_service, client=client
+        )
 
     @provide(scope=Scope.REQUEST)
     async def get_rss_collector(
-        self,
-        hash_service: HashService,
+        self, hash_service: HashService, client: httpx.AsyncClient
     ) -> RSSCollector:
-        return RSSCollector(hash_service=hash_service)
+        return RSSCollector(hash_service=hash_service, client=client)
 
     @provide(scope=Scope.REQUEST)
     async def get_news_collector(
